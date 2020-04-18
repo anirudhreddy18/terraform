@@ -1,0 +1,16 @@
+Variables
+* Use variables to hide secrets
+* Use variables for elements that might change
+* Use variables to make yourself easier to reuse terraform files
+syntax:
+ ${var.VAR_NAME}
+simple types:
+ string
+ number
+ bool
+Complex types:
+ List is ordered
+ Map
+ Tuple : each element can be different type
+  
+*** terraform.tfvars has secrets like access key and secret key, dont commit to git 
