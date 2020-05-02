@@ -14,3 +14,12 @@ Complex types:
  Tuple : each element can be different type
   
 *** terraform.tfvars has secrets like access key and secret key, dont commit to git 
+
+Outputting attributes
+* you can output some of attributes, like after ec2 instance is provisioned get public ip of instance
+
+Remote state
+terraform keeps remote state of infrastructure, file called terraform.tfstate
+backup state in terraform.tfstate.backup
+when you run terrafrom apply, a new terraform.tfstate and backup is written
+eg, you terminate an instance managed by terraform, after terraform apply it will be started again.
