@@ -100,9 +100,41 @@ RDS
  DB subnet Group
  enabling HA you will have instance in both subnets.
 
- IAM (Users, groups, roles)
+IAM (Users, groups, roles)
+  admin group can give admin privileges to users
+  Users can authenticate:
+    - login/password
+    - an access and secret key
+  roles give users/services temporary access they normally wont have
+  roles can be for instance attached to ec2 instances
+    * from that instance, a user or service can obtain these credentials.
+  Service:
+   instead of user using aws cli, a service also assume a roles
+   service needs to implement AWS SDK
+   when trying to access s3 bucket, an api call to aws will occur
+  Roles:
+    only work for ec2 instances. 
 
+Autoscaling:
+  AWS launch configuration(AMI ID, security group etc)
+  Autoscaling group(min instances, max instances, health checks)
+  Autoscaling policy attached to ASG (cpu, memory etc)
+  cloud watch alarm to trigger ASG policy(alarm actions -> ASG policy)
 
+ELB
+  elb itself scales when receive more traffic
+  elb will healthcheck instances
+  if instance fails health check, no traffic is sent
+  elb acts according to ASG
+  classic ELB
+    routes traffic on network information
+    forwards traffic from port 80 to 8080(application)
+    has to be in public VPC(can launch in multiple subnets)
+    if u have domain(exao=mple.com) use route 53 to call the load balancer address
+    you can setup ingress to only access incoming tarffic from ELB instead of 0.0.0.0
+  Application Load balancer (ALB)
+    routes traffic based on app level information.
+    route /api and /website to different ec2 instances.  
 
 
 
