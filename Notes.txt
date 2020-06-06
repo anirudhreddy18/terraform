@@ -1,3 +1,4 @@
+tool to create and manage infrastructure resources
 Variables
 * Use variables to hide secrets
 * Use variables for elements that might change
@@ -18,8 +19,124 @@ Complex types:
 Outputting attributes
 * you can output some of attributes, like after ec2 instance is provisioned get public ip of instance
 
-Remote state
+Remote state *****
 terraform keeps remote state of infrastructure, file called terraform.tfstate
-backup state in terraform.tfstate.backup
+backup of previous version state in terraform.tfstate.backup
 when you run terrafrom apply, a new terraform.tfstate and backup is written
 eg, you terminate an instance managed by terraform, after terraform apply it will be started again.
+backend functionality:
+ s3
+ consul
+ terraform enterprise (avoids having to commit and push terraform.tfstate file to version control)
+
+ Data sources
+ like only allow traffic to ec2 instances from certain ip addresses.
+
+ Modules
+ use 3rd party Modules
+ reuse parts of code
+   setup network in AWS (VPC)
+
+TF Commands
+destroy -> destroys all state
+apply -> applies state
+show -> state file in more readable way
+taint -> delete and recreate resources
+graph -> useful
+refresh -> compares local state with remote state
+fmt -> formats terraform files   
+
+VPC
+1 instance in one vpc cannot communicate wiht other instance in another vpc. (they csn with public ip not recommended)
+instances in same vpc can connect to each other.
+link 2 vpc with peering.
+
+10.0.0.0/16 255.255.0.0 ranges from 10.0.0.0 to 10.0.255.255  VPC range
+Subnets have thier own ip ranges too with in the vpc range
+10.0.1.0/24 255.255.255.0 ip ranges from 10.0.1.0 to 10.0.1.255 Subnet ranges
+instances launched in these subnets will have ip address like 10.0.1.20
+*** amazon calls each datatcenter an AZ
+
+All public subnets are connected to internet gateway. instances have public ip address, reachable from internet.
+instances launched in private subnetds are not reachable from internet. (NAT Gateway)
+instances from public can reach instances in private subnets with thier private ip addresses if they are in same vpc. you need to set firewall rules
+public subnets for internet facing applications.
+private subnets for databases, caching services and backends.
+if use Load balancer, LB will be in public subnet and instances serving application in private subnets.
+*** if instances needs to access internet in private subnet, use nat gateway.
+like database will be on private subnet, so for a database to get updates use nat gateway.
+for nat gateway need elastic ip.
+
+Security group (firewall)
+ingress -> allow incoming traffic (can make more restrictive like ssh, http etc)
+egress -> allow outgoing traffic genrally allow to anywhere 0.0.0.0/0
+
+EBS 
+default 8gb for t2 micro storage
+local storage 
+   ephermeral storage
+   lost when instance terminates
+8GB root volume is automatically removed when instance terminates. Can instruct aws not to so, but its anti pattern
+8GB is enough for most cases.
+extra volumes can be used for log files, and real data put on instance. data is persisted until you remove it.
+
+Userdata (not clear)
+install extra software (like nginx)
+prepare the instance to join a cluster(consul, ECS)
+execute commands/scripts
+mount volumes
+only executed at instance creation, not reboot.
+userdata simple as string
+userdata complex use template system of terraform.
+learrn cloud config scripts ()
+learn custom template 
+
+RDS
+   replication -> 2 instances that always replicates each other. master fails standby takes over
+   automated snaphsots
+   Security updates
+   vertical scaling
+ Paramter Group goes into configuration file
+ DB subnet Group
+ enabling HA you will have instance in both subnets.
+
+ IAM (Users, groups, roles)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PACKER
+build aws amis based on templates
+create ami with all the necessary software
+speed up boot time
+common approach when you run a horizontally scaled app layer.
+creates an AMI containing node + appcode, and terraform will provision the ami.
+git + jenkins + terraform + packer/docker.
+
+Docker
+containers on AWS -> server -> host os -> hypervisor -> guest os(amazon provides us this ec2 instance) -> docker engine -> containers
+regular container server -> host os -> docker engine -> containers
+install an ami with docker, thrn start running containers.
+ECR -> registry
+ECS -> docker cluster to run applications
+aws ecr get-login -> login to ECR
+create a repository first in ECR and get the output url.
+ECS - Ec2 container services will manage docker containers
+need to start an ASG with custom ami, custom ami contains ecs agent
+ecs cluster is online, tasks and services can be started.
+need to setup ouur own cluster with ec2 instances and then run containers on the cluster distributed 
+and if want HA use ELB with traffic to different AZ and deploy containers on multiple AZ
