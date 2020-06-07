@@ -136,19 +136,9 @@ ELB
     routes traffic based on app level information.
     route /api and /website to different ec2 instances.  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+MODULES
+ powerful way to reuse code
+ maintain module in a git repo
 
 
 PACKER
@@ -165,6 +155,7 @@ regular container server -> host os -> docker engine -> containers
 install an ami with docker, thrn start running containers.
 ECR -> registry
 ECS -> docker cluster to run applications
+logs will be sent to cloudwatch
 aws ecr get-login -> login to ECR
 create a repository first in ECR and get the output url.
 ECS - Ec2 container services will manage docker containers
