@@ -130,7 +130,7 @@ ELB
     routes traffic on network information
     forwards traffic from port 80 to 8080(application)
     has to be in public VPC(can launch in multiple subnets)
-    if u have domain(exao=mple.com) use route 53 to call the load balancer address
+    if u have domain(example.com) use route 53 to call the load balancer address
     you can setup ingress to only access incoming tarffic from ELB instead of 0.0.0.0
   Application Load balancer (ALB)
     routes traffic based on app level information.
